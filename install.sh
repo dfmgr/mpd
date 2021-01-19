@@ -139,12 +139,12 @@ ensure_perms
 
 if [ -d "$DOWNLOADED_TO/.git" ]; then
   execute \
-    "git_update $APPDIR" \
+    "git_update $DOWNLOADED_TO" \
     "Updating $APPNAME configurations"
 else
   execute \
     "backupapp && \
-        git_clone -q $REPO/$APPNAME $APPDIR" \
+        git_clone -q $REPO/$APPNAME $DOWNLOADED_TO" \
     "Installing $APPNAME configurations"
 fi
 
@@ -176,9 +176,9 @@ failexitcode
 
 run_postinst() {
   dfmgr_run_post
+  #sudoask && devnull sudo systemctl disable --now mpd.socket mpd.service
   mkd "$HOME/.ncmpcpp"
   ln_sf $HOME/.config/mpd/ncmpcpp.conf $HOME/.ncmpcpp/config
-  sudoask && devnull sudo systemctl disable --now mpd.socket mpd.service
   if ! pgrep mpd >/dev/null 2>&1; then
     mpd &
   fi
