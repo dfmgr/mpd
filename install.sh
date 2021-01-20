@@ -137,14 +137,17 @@ ensure_perms
 
 # Main progam
 
+if [ -d "$APPDIR" ]; then
+  execute "backupapp $APPDIR $APPNAME" "Backing up $APPDIR"
+fi
+
 if [ -d "$DOWNLOADED_TO/.git" ]; then
   execute \
     "git_update $DOWNLOADED_TO" \
     "Updating $APPNAME configurations"
 else
   execute \
-    "backupapp && \
-        git_clone -q $REPO/$APPNAME $DOWNLOADED_TO" \
+    "git_clone -q $REPO/$APPNAME $DOWNLOADED_TO" \
     "Installing $APPNAME configurations"
 fi
 
@@ -156,21 +159,21 @@ failexitcode
 # Plugins
 
 if __am_i_online; then
-if [ "$PLUGNAMES" != "" ]; then
-  if [ -d "$PLUGDIR"/PLUREP/.git ]; then
-    execute \
-      "git_update $PLUGDIR/PLUGREP" \
-      "Updating plugin PLUGNAME"
-  else
-    execute \
-      "git_clone PLUGINREPO $PLUGDIR/PLUGREP" \
-      "Installing plugin PLUGREP"
+  if [ "$PLUGNAMES" != "" ]; then
+    if [ -d "$PLUGDIR"/PLUREP/.git ]; then
+      execute \
+        "git_update $PLUGDIR/PLUGREP" \
+        "Updating plugin PLUGNAME"
+    else
+      execute \
+        "git_clone PLUGINREPO $PLUGDIR/PLUGREP" \
+        "Installing plugin PLUGREP"
+    fi
   fi
-fi
-fi
 
-# exit on fail
-failexitcode
+  # exit on fail
+  failexitcode
+fi
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -180,9 +183,9 @@ run_postinst() {
   dfmgr_run_post
   #sudoask && devnull sudo systemctl disable --now mpd.socket mpd.service
   mkd "$HOME/.ncmpcpp"
-  ln_sf $HOME/.config/mpd/ncmpcpp.conf $HOME/.ncmpcpp/config
+  ln_sf "$HOME/.config/mpd/ncmpcpp.conf" "$HOME/.ncmpcpp/config"
   if ! pgrep mpd >/dev/null 2>&1; then
-    mpd &
+    mpd &>/dev/null &
   fi
 }
 
