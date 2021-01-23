@@ -103,25 +103,25 @@ CPAN=""
 GEMS=""
 
 # install packages - useful for package that have the same name on all oses
-install_packages $APP
+install_packages "$APP"
 
 # install required packages using file
-install_required $APP
+install_required "$APP"
 
 # check for perl modules and install using system package manager
-install_perl $PERL
+install_perl "$PERL"
 
 # check for python modules and install using system package manager
-install_python $PYTH
+install_python "$PYTH"
 
 # check for pip binaries and install using python package manager
-install_pip $PIPS
+install_pip "$PIPS"
 
 # check for cpan binaries and install using perl package manager
-install_cpan $CPAN
+install_cpan "$CPAN"
 
 # check for ruby binaries and install using ruby package manager
-install_gem $GEMS
+install_gem "$GEMS"
 
 # Other dependencies
 dotfilesreq git
@@ -136,7 +136,7 @@ ensure_perms
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-# Main progam
+# Main program
 
 if [ -d "$APPDIR" ]; then
   execute "backupapp $APPDIR $APPNAME" "Backing up $APPDIR"
@@ -183,12 +183,12 @@ fi
 run_postinst() {
   dfmgr_run_post
   #sudoask && devnull sudo systemctl disable --now mpd.socket mpd.service
-  mkd "$HOME/.ncmpcpp"
+  __mkd "$HOME/.ncmpcpp"
   ln_sf "$HOME/.config/mpd/ncmpcpp.conf" "$HOME/.ncmpcpp/config"
   if ! pgrep mpd >/dev/null 2>&1; then
     mpd &>/dev/null &
   fi
-  if is_r
+
 }
 
 execute \
