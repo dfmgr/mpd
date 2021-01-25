@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+##@Version     : 012520211631-git
+# @Author      : Jason
+# @Contact     : casjaysdev@casjay.net
+# @File        : getart
+# @Created     : Mon, Dec 31, 2019, 00:00 EST
+# @License     : WTFPL
+# @Copyright   : Copyright (c) CasjaysDev
+# @Description : returns album art for the "artist - album" input string
+#
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+[[ -z "$ARTDIR" ]] && ARTDIR="$HOME/.cache/albumart"
+[[ -d "$ARTDIR" ]] || mkdir -p "$ARTDIR"
+
+declare mpccurrent artfile
+mpccurrent="$(echo "$@" | sed -r 's/(\[|\]|\,)//g')"
+artfile=$(find "$ARTDIR" -iname "${mpccurrent}*")
+[[ -z "$artfile" ]] && {
+  # customize useragent at http://whatsmyuseragent.com/
+  useragent='Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:31.0) Gecko/20100101 Firefox/31.0'
+  link imagelink ext imagepath
+  link="www.google.com/search?q=$(urlencode "$mpccurrent")\&tbm=isch"
+  #imagelinks=$(wget -e robots=off --user-agent "$useragent" -qO - "$link" | sed 's/</\n</g' | grep '<a href.*\(png\|jpg\|jpeg\)' | sed 's/.*imgurl=\([^&]*\)\&.*/\1/')
+  imagelinks=$(timeout 10s wget -e robots=off --user-agent "$useragent" -o /dev/null -qO - "$link" | sed 's/</\n</g' | grep "ou\":\"http" | sed -nr 's/.*ou\":\"([^"]+).*/\1/p')
+  for imagelink in $imagelinks; do
+    imagelink=$(echo "$imagelink" | sed -nr 's/(.*\.(jpg|jpeg|png)).*/\1/p')
+    ext=$(echo "$imagelink" | sed -nr 's/.*(\.(jpg|jpeg|png)).*/\1/p')
+    imagepath="${ARTDIR}/${mpccurrent}${ext}"
+    timeout 10s wget --max-redirect 0 -o /dev/null -qO "$imagepath" "${imagelink}"
+    [[ -s "$imagepath" ]] && break
+    rm "$imagepath" # remove zero length file
+  done
+  artfile=$(find "$ARTDIR" -iname "${mpccurrent}*")
+}
+echo "$artfile"
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# End

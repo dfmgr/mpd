@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+##@Version     : 012520211631-git
+# @Author      : Jason
+# @Contact     : casjaysdev@casjay.net
+# @File        : notifyart
+# @Created     : Mon, Dec 31, 2019, 00:00 EST
+# @License     : WTFPL
+# @Copyright   : Copyright (c) CasjaysDev
+# @Description : sends notifications for the new title
+#
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+declare artist album title oldartist oldtitle
+while true; do
+  artist=$(mpc current | awk -F": " '/^Artist:/{print $2}')
+  title=$(mpc current | awk -F": " '/^Title:/{print $2}')
+  album=$(mpc current | awk -F": " '/^Album:/{print $2}')
+  [[ "$artist" != "$oldartist" ]] || [[ "$title" != "$oldtitle" ]] && {
+    notifyart "$artist" "$title" "$album"
+    oldartist="$artist"
+    oldtitle="$title"
+  }
+  sleep 2
+done
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# End

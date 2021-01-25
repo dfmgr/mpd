@@ -1,17 +1,21 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 ##@Version     : 012520211631-git
 # @Author      : Jason
 # @Contact     : casjaysdev@casjay.net
-# @File        : mpd-module-update
+# @File        : notifyart
 # @Created     : Mon, Dec 31, 2019, 00:00 EST
 # @License     : WTFPL
 # @Copyright   : Copyright (c) CasjaysDev
-# @Description : update the mpd statusbar module
+# @Description : sends notifications for the new title
 #
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-while :; do
-  mpc idle >/dev/null && pkill -RTMIN+11 "${STATUSBAR:?}" || break
-done
+netcat="$(command -v nc 2>/dev/null || command -v netcat 2>/dev/null)"
+__nc() { $netcat -c "$@" && true || $netcat -w 1 "$@"; }
+
+echo "$@" | __nc "$MPDSERVER" 6600
+
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# End
