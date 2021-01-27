@@ -185,10 +185,9 @@ run_postinst() {
   #sudoask && devnull sudo systemctl disable --now mpd.socket mpd.service
   __mkd "$HOME/.ncmpcpp"
   ln_sf "$HOME/.config/mpd/ncmpcpp.conf" "$HOME/.ncmpcpp/config"
-  if ! pgrep mpd >/dev/null 2>&1; then
-    mpd &>/dev/null &
-  fi
-
+  replace "$APPDIR" "localhost" "${MPDSERVER:-localhost}"
+  replace "$APPDIR" "6600" "${MPDSERVER_PORT:-6600}"
+  pgrep mpd >/dev/null 2>&1 || mpd &>/dev/null &
 }
 
 execute \
