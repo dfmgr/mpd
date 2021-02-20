@@ -60,7 +60,7 @@ argv = argv[1:]
 albumTitle = argv[0]
 discogsKey = argv[1]
 discogsSecret = argv[2]
-doNotFetchPath = path.expanduser("~/.mpd-notify/doNotFetch.txt")
+doNotFetchPath = path.expanduser("~/.config/mpd/mpd-notify/doNotFetch.txt")
 doNotFetch = open(doNotFetchPath).read().splitlines() # Albums to not scrape art for. If scraping fails, the album will be added to the doNotFetch.
 if len(argv) >= 1:
     if albumTitle not in doNotFetch:
