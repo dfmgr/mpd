@@ -1,36 +1,87 @@
 #!/usr/bin/env bash
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+PROG="mpdd"
+USER="${SUDO_USER:-${USER}}"
+HOME="${USER_HOME:-${HOME}}"
+SRC_DIR="${BASH_SOURCE%/*}"
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#set opts
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-##@Version     : 012520211631-git
-# @Author      : Jason
-# @Contact     : casjaysdev@casjay.net
-# @File        : mpdd
-# @Created     : Mon, Dec 31, 2019, 00:00 EST
-# @License     : WTFPL
-# @Copyright   : Copyright (c) CasjaysDev
-# @Description : Display mpd status in terminal
-#
+##@Version       : 031520211354-git
+# @Author        : Jason Hempstead
+# @Contact       : jason@casjaysdev.com
+# @License       : WTFPL
+# @ReadME        : mpdd --help
+# @Copyright     : Copyright: (c) 2021 Jason Hempstead, CasjaysDev
+# @Created       : Monday, Mar 15, 2021 13:54 EDT
+# @File          : mpdd
+# @Description   : Display mpd status in terminal
+# @TODO          :
+# @Other         :
+# @Resource      :
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-declare _r _l _p
-while sleep 1; do
-  _r=$(awk 'BEGIN{FS=": "}
+# Main function file
+if [ -f "$SRC_DIR/functions.bash" ]; then
+  FUNCTIONS_DIR="$SRC_DIR"
+  . "$FUNCTIONS_DIR/functions.bash"
+elif [ -f "$HOME/.local/bin/functions.bash" ]; then
+  FUNCTIONS_DIR="$HOME/.local/bin"
+  . "$FUNCTIONS_DIR/functions.bash"
+else
+  printf "\t\t\033[0;31m%s \033[0m\n" "Couldn't source the functions file from $FUNCTIONS_DIR"
+  return 1
+fi
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# helper function
+__version() { app_version; }
+__help() {
+  app_help "Usage: mpdd  -  mpdd --version"  \
+    "-v, --version          -  display version" \
+    "-h, --help             -  display help"
+}
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Main function
+main() {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # options
+  case $1 in
+    -v | --version) __version ;;
+    -h | --help) __help ;;
+  esac
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Required app check
+  cmd_exists --error bash || exit 1
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # begin main app
+  local mpdserver="${MPDSERVER:-localhost}"
+  local mpdserverport="${MPDSERVER_PORT:-6600}"
+  declare _r _l _p
+  while sleep 1; do
+    _r=$(awk 'BEGIN{FS=": "}
                 /^Artist:/{r=r""$2};
                 /^Title:/{r=r" - "$2};
                 /^time:/{r=$2" "r};
                 /^state: play/{f=1}
               END{if(f==1){print r}}' <(
-    mpc status
-    mpc current
-  ))
+      mpc -h "$mpdserver" -p $mpdserverport status
+      mpc -h "$mpdserver" -p $mpdserverport current
+    ))
 
-  _l=${#_r}
-  [[ $_l -eq 0 ]] && continue
-  [[ -z "$_p" ]] && _p=$_l
-  echo -ne "\e[s\e[0;${_p}H\e[K\e[u"
-  _p=$((COLUMNS - _l))
-  echo -ne "\e[s\e[0;${_p}H\e[K\e[0;44m\e[1;33m${_r}\e[0m\e[u"
-done
-
+    _l=${#_r}
+    [[ $_l -eq 0 ]] && continue
+    [[ -z "$_p" ]] && _p=$_l
+    echo -ne "\e[s\e[0;${_p}H\e[K\e[u"
+    _p=$((COLUMNS - _l))
+    echo -ne "\e[s\e[0;${_p}H\e[K\e[0;44m\e[1;33m${_r}\e[0m\e[u"
+  done
+  return "${exitCode:-$?}"
+}
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# End
+# execute function
+main "$@"
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+exit $?
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# end
+

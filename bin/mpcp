@@ -1,21 +1,76 @@
 #!/usr/bin/env bash
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+PROG="mpcp"
+USER="${SUDO_USER:-${USER}}"
+HOME="${USER_HOME:-${HOME}}"
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#set opts
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-##@Version     : 012520211631-git
-# @Author      : Jason
-# @Contact     : casjaysdev@casjay.net
-# @File        : notifyart
-# @Created     : Mon, Dec 31, 2019, 00:00 EST
-# @License     : WTFPL
-# @Copyright   : Copyright (c) CasjaysDev
-# @Description : sends notifications for the new title
-#
+##@Version       : 031520211319-git
+# @Author        : Jason Hempstead
+# @Contact       : jason@casjaysdev.com
+# @License       : WTFPL
+# @ReadME        : mpcp --help
+# @Copyright     : Copyright: (c) 2021 Jason Hempstead, CasjaysDev
+# @Created       : Monday, Mar 15, 2021 13:19 EDT
+# @File          : mpcp
+# @Description   : Send commands to mpd using netcat
+# @TODO          :
+# @Other         :
+# @Resource      :
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-netcat="$(command -v nc 2>/dev/null || command -v netcat 2>/dev/null)"
-__nc() { $netcat -c "$@" && true || $netcat -w 1 "$@"; }
-
-echo "$@" | __nc "$MPDSERVER" 6600
-
+# Main function file
+if [ -f "$SRC_DIR/functions.bash" ]; then
+  FUNCTIONS_DIR="$SRC_DIR"
+  . "$FUNCTIONS_DIR/functions.bash"
+elif [ -f "$HOME/.local/bin/functions.bash" ]; then
+  FUNCTIONS_DIR="$HOME/.local/bin"
+  . "$FUNCTIONS_DIR/functions.bash"
+else
+  printf "\t\t\033[0;31m%s \033[0m\n" "Couldn't source the functions file from $FUNCTIONS_DIR"
+  return 1
+fi
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-# End
+# helper function
+__version() { app_version; }
+__help() {
+  app_help "Usage: mpcp command"
+    "-v, --version          -  display version" \
+    "-h, --help             -  display help"
+}
+__nc() { $netcat -c "$@" && true || $netcat -w 1 "$@" || return 1; }
+__msg_ok() { notifications "MPCP" "Sent $@ to $MPDSERVER" && return 0 || return 1; }
+__msg_fail() { notifications "MPCP" "Failed to send $@ to $MPDSERVER" && return 0 || return 1; }
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# Main function
+main() {
+netcat="$(command -v nc 2>/dev/null || command -v netcat 2>/dev/null || return 1)"
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # options
+  case $1 in
+    -v | --version) __version ;;
+    -h | --help) __help ;;
+  esac
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Required app check
+  cmd_exists --error $netcat || exit 1
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # begin main app
+  local mpdserver="${MPDSERVER:-localhost}"
+  local mpdserverport="${MPDSERVER_PORT:-6600}"
+  if [ $# -ne 0 ]; then
+    echo "$@" | __nc $mpdserver $mpdserverport && __msg_ok "$@" || __msg_fail "$@"
+  else
+    __help
+  fi
+  return "${exitCode:-$?}"
+}
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# execute function
+main "$@"
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+exit $?
+# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+# end
+
