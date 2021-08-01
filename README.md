@@ -5,7 +5,7 @@ flexible, powerful, server-side application for playing music
 Automatic install/update:
 
 ```shell
-bash -c "$(curl -LSs https://github.com/dfmgr/mpd/raw/master/install.sh)"
+bash -c "$(curl -LSs https://github.com/dfmgr/mpd/raw/main/install.sh)"
 ```
 
 Manual install:
