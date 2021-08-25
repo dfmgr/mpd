@@ -36,7 +36,7 @@ fi
 # helper function
 __version() { app_version; }
 __help() {
-  app_help "Usage: getart  -  getart --version"  \
+  app_help "Usage: getart  -  getart --version" \
     "-v, --version          -  display version" \
     "-h, --help             -  display help"
 }
@@ -46,8 +46,8 @@ main() {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # options
   case $1 in
-    -v | --version) __version ;;
-    -h | --help) __help ;;
+  -v | --version) __version ;;
+  -h | --help) __help ;;
   esac
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Required app check
@@ -62,9 +62,9 @@ main() {
   artfile=$(find "$ARTDIR" -iname "${mpccurrent}*")
   [[ -z "$artfile" ]] && am_i_online && {
     useragent='Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:31.0) Gecko/20100101 Firefox/31.0'
-   link imagelink ext imagepath 2>/dev/null
+    link imagelink ext imagepath 2>/dev/null
     link="www.google.com/search?q=$(urlencode "$mpccurrent")\&tbm=isch"
-    imagelinks=$(timeout 10s wget -e robots=off --user-agent "$useragent" -o /dev/null -qO - "$link" | \
+    imagelinks=$(timeout 10s wget -e robots=off --user-agent "$useragent" -o /dev/null -qO - "$link" |
       sed 's/</\n</g' | grep "ou\":\"http" | sed -nr 's/.*ou\":\"([^"]+).*/\1/p')
     for imagelink in $imagelinks; do
       imagelink=$(echo "$imagelink" | sed -nr 's/(.*\.(jpg|jpeg|png)).*/\1/p')
@@ -74,7 +74,7 @@ main() {
       [[ -s "$imagepath" ]] && break
       rm "$imagepath" # remove zero length file
     done
-  artfile=$(find "$ARTDIR" -iname "${mpccurrent}*")
+    artfile=$(find "$ARTDIR" -iname "${mpccurrent}*")
   }
   echo "$artfile"
   return "${exitCode:-$?}"
@@ -86,4 +86,3 @@ main "$@"
 exit $?
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # end
-

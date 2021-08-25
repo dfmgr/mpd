@@ -36,7 +36,7 @@ fi
 # helper function
 __version() { app_version; }
 __help() {
-  app_help "Usage: notifympd  -  notifympd artist title album"  \
+  app_help "Usage: notifympd  -  notifympd artist title album" \
     "-v, --version          -  display version" \
     "-h, --help             -  display help"
 }
@@ -46,8 +46,8 @@ main() {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # options
   case $1 in
-    -v | --version) __version ;;
-    -h | --help) __help ;;
+  -v | --version) __version ;;
+  -h | --help) __help ;;
   esac
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Required app check
@@ -65,9 +65,9 @@ main() {
       notifyart "$artist" "$title" "$album"
       oldartist="$artist"
       oldtitle="$title"
-  }
-  sleep 2
-done
+    }
+    sleep 2
+  done
   return "${exitCode:-$?}"
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -77,4 +77,3 @@ main "$@"
 exit $?
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # end
-

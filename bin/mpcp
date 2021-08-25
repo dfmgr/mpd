@@ -36,21 +36,21 @@ fi
 __version() { app_version; }
 __help() {
   app_help "Usage: mpcp command"
-    "-v, --version          -  display version" \
+  "-v, --version          -  display version" \
     "-h, --help             -  display help"
 }
 __nc() { $netcat -c "$@" && true || $netcat -w 1 "$@" || return 1; }
-__msg_ok() { notifications "MPCP" "Sent $@ to $MPDSERVER" && return 0 || return 1; }
-__msg_fail() { notifications "MPCP" "Failed to send $@ to $MPDSERVER" && return 0 || return 1; }
+__msg_ok() { notifications "MPCP" "Sent $* to $MPDSERVER" && return 0 || return 1; }
+__msg_fail() { notifications "MPCP" "Failed to send $* to $MPDSERVER" && return 0 || return 1; }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Main function
 main() {
-netcat="$(command -v nc 2>/dev/null || command -v netcat 2>/dev/null || return 1)"
-# - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  netcat="$(command -v nc 2>/dev/null || command -v netcat 2>/dev/null || return 1)"
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # options
   case $1 in
-    -v | --version) __version ;;
-    -h | --help) __help ;;
+  -v | --version) __version ;;
+  -h | --help) __help ;;
   esac
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Required app check
@@ -73,4 +73,3 @@ main "$@"
 exit $?
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # end
-
