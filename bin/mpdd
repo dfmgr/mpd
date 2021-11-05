@@ -67,6 +67,7 @@ main() {
       exitCode=1
     fi
   done &
+  trap '[[ -f "$cachefile" ]] && rm -Rf $cachefile || true' EXIT
   return "${exitCode:-$?}"
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
