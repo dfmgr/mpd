@@ -36,13 +36,24 @@ fi
 # helper function
 __version() { app_version; }
 __help() {
-  app_help "Usage: mpdd  -  mpdd --version" \
+  app_help "Usage: mpdd" \
+    "You can stop the program by running " \
+    "touch ${cachefile}_kill" \
+    " " \
     "-v, --version          -  display version" \
     "-h, --help             -  display help"
 }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Main function
 main() {
+  mpd_cli() { mpc -h "$mpdserver" -p "$mpdserverport" "$*"; }
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Variables
+  local mpd_song mpdserver mpdserverport cachefile
+  cachefile="$HOME/.cache/mpdd"
+  mpdserver="${MPDSERVER:-localhost}"
+  mpdserverport="${MPDSERVER_PORT:-6600}"
+
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # options
   case $1 in
@@ -54,16 +65,12 @@ main() {
   cmd_exists --error bash || exit 1
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # begin main app
-  local mpd_song mpdserver mpdserverport cachefile
-  cachefile="$HOME/.cache/mpdd"
-  mpdserver="${MPDSERVER:-localhost}"
-  mpdserverport="${MPDSERVER_PORT:-6600}"
   [[ -f "${cachefile}_kill" ]] && rm -Rf "${cachefile}_kill"
   while sleep 1; do
     [[ -f "${cachefile}_kill" ]] && break
-    mpd_song="$(mpc -h "$mpdserver" -p "$mpdserverport" status &>/dev/null && mpc current || return)"
+    mpd_song="$(mpd_cli status &>/dev/null && mpd_cli current || return)"
     if [[ -n "$mpd_song" ]]; then
-      printf '%s\n' >"$cachefile"
+      printf '%s\n' "$mpd_song" >"$cachefile"
       printf '\e[s\e[0;\%s\e[K\e[u' "$mpd_song"
     else
       exitCode=1
