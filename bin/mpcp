@@ -41,7 +41,7 @@ __help() {
 }
 __nc() { $netcat -c "$@" && true || $netcat -w 1 "$@" || return 1; }
 __msg_ok() { notifications "MPCP" "Sent $* to $MPDSERVER" && return 0 || return 1; }
-__msg_fail() { notifications "MPCP" "Failed to send $* to $MPDSERVER" && return 0 || return 1; }
+__msg_fail() { notifications "MPCP" "Failed to send $* to $MPDSERVER" && return 1; }
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Main function
 main() {
