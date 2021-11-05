@@ -58,7 +58,9 @@ main() {
   cachefile="$HOME/.cache/mpdd"
   mpdserver="${MPDSERVER:-localhost}"
   mpdserverport="${MPDSERVER_PORT:-6600}"
+  [[ -f "${cachefile}_kill" ]] && rm -Rf "${cachefile}_kill"
   while sleep 1; do
+    [[ -f "${cachefile}_kill" ]] && break
     mpd_song="$(mpc -h "$mpdserver" -p "$mpdserverport" status &>/dev/null && mpc current || return)"
     if [[ -n "$mpd_song" ]]; then
       printf '%s\n' >"$cachefile"
