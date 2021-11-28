@@ -146,9 +146,9 @@ fi
 # run post install scripts
 run_postinst() {
   dfmgr_run_post
-  mkd "$HOME/.ncmpcpp"
+  mkd "$HOME/.config/ncmpcpp"
   mkd "$HOME/.config/mpd/playlists"
-  ln_sf "$HOME/.config/mpd/ncmpcpp.conf" "$HOME/.ncmpcpp/config"
+  ln_sf "$HOME/.config/mpd/ncmpcpp.conf" "$HOME/.config/ncmpcpp/config"
   replace "$APPDIR" "localhost" "${MPDSERVER:-localhost}"
   replace "$APPDIR" "6600" "${MPDSERVER_PORT:-6600}"
   pgrep mpd >/dev/null 2>&1 || mpd &>/dev/null &
