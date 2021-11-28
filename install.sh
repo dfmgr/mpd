@@ -148,6 +148,10 @@ run_postinst() {
   dfmgr_run_post
   mkd "$HOME/.config/ncmpcpp"
   mkd "$HOME/.config/mpd/playlists"
+  if [[ -f "$HOME/.ncmpcpp/config" ]]; then
+    mv -f "$HOME/.ncmpcpp/config" "$HOME/.config/config.bak"
+    rm -Rf "$HOME/.ncmpcpp"
+  fi
   ln_sf "$HOME/.config/mpd/ncmpcpp.conf" "$HOME/.config/ncmpcpp/config"
   replace "$APPDIR" "localhost" "${MPDSERVER:-localhost}"
   replace "$APPDIR" "6600" "${MPDSERVER_PORT:-6600}"
