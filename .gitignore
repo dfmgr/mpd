@@ -6,3 +6,5 @@ pid
 state
 tag_cache
 sticker.sql
+# ignore commit message
+.gitcommit
