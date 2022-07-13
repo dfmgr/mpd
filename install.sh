@@ -159,6 +159,7 @@ run_postinst() {
   fi
   sudo systemct disable --now mpd.service &>/dev/null
   sudo systemct disable --now mpd.socket &>/dev/null
+  killall mpd &>/dev/null
   ln_sf "$HOME/.config/mpd/ncmpcpp.conf" "$HOME/.config/ncmpcpp/config"
   replace "$APPDIR" "localhost" "${MPDSERVER:-localhost}"
   replace "$APPDIR" "6600" "${MPDSERVER_PORT:-6600}"
