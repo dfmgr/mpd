@@ -148,10 +148,17 @@ run_postinst() {
   dfmgr_run_post
   mkd "$HOME/.config/ncmpcpp"
   mkd "$HOME/.config/mpd/playlists"
+  touch "$HOME/.config/mpd/tag_cache"
   if [[ -f "$HOME/.ncmpcpp/config" ]]; then
     mv -f "$HOME/.ncmpcpp/config" "$HOME/.config/config.bak"
     rm -Rf "$HOME/.ncmpcpp"
   fi
+  if [[ -f "$HOME/.config/mpd/mpd.conf" ]]; then
+    mv -f "$HOME/.config/mpd/mpd.conf" "$HOME/.config/mpd/mpd.conf.bak"
+    rm -Rf "$HOME/.config/mpd/mpd.conf"
+  fi
+  sudo systemct disable --now mpd.service &>/dev/null
+  sudo systemct disable --now mpd.socket &>/dev/null
   ln_sf "$HOME/.config/mpd/ncmpcpp.conf" "$HOME/.config/ncmpcpp/config"
   replace "$APPDIR" "localhost" "${MPDSERVER:-localhost}"
   replace "$APPDIR" "6600" "${MPDSERVER_PORT:-6600}"
