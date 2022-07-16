@@ -152,7 +152,7 @@ run_postinst() {
   #if [[ -f "$HOME/.ncmpcpp/config" ]]; then
   #  mv -f "$HOME/.ncmpcpp/config" "$HOME/.config/config.bak"
   #  rm -Rf "$HOME/.ncmpcpp"
-  fi
+  #fi
   #if [[ -f "$HOME/.config/mpd/mpd.conf" ]]; then
   #  cp -f "$HOME/.config/mpd/mpd.conf" "$HOME/.config/mpd/mpd.conf.bak"
   #  rm -Rf "$HOME/.config/mpd/mpd.conf"
