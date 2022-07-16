@@ -149,14 +149,14 @@ run_postinst() {
   mkd "$HOME/.config/ncmpcpp"
   mkd "$HOME/.config/mpd/playlists"
   touch "$HOME/.config/mpd/tag_cache"
-  if [[ -f "$HOME/.ncmpcpp/config" ]]; then
-    mv -f "$HOME/.ncmpcpp/config" "$HOME/.config/config.bak"
-    rm -Rf "$HOME/.ncmpcpp"
+  #if [[ -f "$HOME/.ncmpcpp/config" ]]; then
+  #  mv -f "$HOME/.ncmpcpp/config" "$HOME/.config/config.bak"
+  #  rm -Rf "$HOME/.ncmpcpp"
   fi
-  if [[ -f "$HOME/.config/mpd/mpd.conf" ]]; then
-    mv -f "$HOME/.config/mpd/mpd.conf" "$HOME/.config/mpd/mpd.conf.bak"
-    rm -Rf "$HOME/.config/mpd/mpd.conf"
-  fi
+  #if [[ -f "$HOME/.config/mpd/mpd.conf" ]]; then
+  #  cp -f "$HOME/.config/mpd/mpd.conf" "$HOME/.config/mpd/mpd.conf.bak"
+  #  rm -Rf "$HOME/.config/mpd/mpd.conf"
+  #fi
   sudo systemct disable --now mpd.service &>/dev/null
   sudo systemct disable --now mpd.socket &>/dev/null
   killall mpd &>/dev/null
@@ -164,6 +164,7 @@ run_postinst() {
   replace "$APPDIR" "localhost" "${MPDSERVER:-localhost}"
   replace "$APPDIR" "6600" "${MPDSERVER_PORT:-6600}"
   pgrep mpd >/dev/null 2>&1 || mpd &>/dev/null &
+  mpd &>/dev/null & disown
 }
 #
 execute "run_postinst" "Running post install scripts"
