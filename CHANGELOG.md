@@ -1,3 +1,11 @@
+#### Changelog: 2022-07-20 at 07:45:49  
+  
+startup/mpd.desktop      🚀  
+  
+#### End of changes for 202207042116-git - 2022-07-20 at 07:45:49  
+  
+----  
+  
 #### Changelog: 2022-07-16 at 09:52:00  
   
 install.sh      🚀  
