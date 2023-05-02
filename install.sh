@@ -176,7 +176,7 @@ PYTHON_PIP="timidity"
 PHP_COMPOSER=""
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Run custom actions
-
+__app_is_running mpd && MPD_IS_RUNNING="true"
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # Show a custom message after install
 __run_post_message() {
